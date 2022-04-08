@@ -1,0 +1,16 @@
+[
+    {
+  "job_description":"a decription related to UX designer requirements",
+  "job_role":"UX Designer",
+  "open":true,
+  "value":"3"
+
+} ,
+{
+  "job_description":"write an artical on our DAO",
+  "job_role":"Research writing",
+  "open":false,
+  "value":"5"
+
+} 
+]
