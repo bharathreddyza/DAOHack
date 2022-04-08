@@ -1,6 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const DaoModel = require('./models/daoModel');
+
+DaoModel.create()
+  .then(async () => {
+    console.log('IPFS connected 📑️📑️');
+  })
+  .catch((err) => {
+    console.log('IPFS error : ', err);
+  });
 
 const app = express();
 
