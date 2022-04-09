@@ -1,14 +1,32 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useEffect } from 'react';
 import { Popover, Transition } from '@headlessui/react';
- import { connectWallet } from '../Api/metamask';
- import { MenuIcon, XIcon } from '@heroicons/react/outline';
+import { useSelector, useDispatch } from 'react-redux';
+import { connectWallet } from '../Api/metamask';
+import { userThunks } from '../app/userSlice';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
 // import { covalentThunks } from '../app/covalentSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function Example() {
   const navigate = useNavigate();
-   
+  const dispatch = useDispatch();
+  const userState = useSelector((state) => state.user);
+
+  const loginHandler = () => {
+    dispatch(userThunks.login());
+  };
+
+  useEffect(() => {
+    dispatch(userThunks.checkExisting());
+    // if (userState.isLoggedIn && userState.user) {
+    //   // dispatch(covalentThunks.getUserDaos());
+    // }
+  }, [dispatch, userState.isLoggedIn, userState.user]);
+
+  const connectMetamask = () => {
+    dispatch(userThunks.checkExisting());
+  };
 
   return (
     <Popover className="relative bg-white">
@@ -53,14 +71,29 @@ export default function Example() {
           </Popover.Group>
           <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
             <a
-              onClick={() => navigate(`/users/user1`)}
+              onClick={() => navigate(`/users/${userState?.user}`)}
               href="#"
               className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
             >
               Profile
             </a>
-            
-            
+            {!userState.isLoggedIn && (
+              <button
+                // onClick={connectMetamask}
+                className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                onClick={loginHandler}
+              >
+                Connect
+              </button>
+            )}
+            {userState.isLoggedIn && (
+              <button className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                <span className="flex text-center">
+                  💳 {userState.user.slice(0, 6)}
+                  ...{userState.user.slice(-4)}
+                </span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -132,10 +165,31 @@ export default function Example() {
                     News
                   </a>
 
-                
-                
-  
-                 </nav>
+                  <a
+                    onClick={() => navigate(`/users/${userState?.user}`)}
+                    href="#"
+                    className="-m-3 p-3   items-center rounded-md hover:bg-gray-50 text-base font-medium text-gray-500 hover:text-gray-900"
+                  >
+                    Profile
+                  </a>
+                  {!userState.isLoggedIn && (
+                    <button
+                      // onClick={connectMetamask}
+                      className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                      onClick={loginHandler}
+                    >
+                      Connect
+                    </button>
+                  )}
+                  {userState.isLoggedIn && (
+                    <button className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                      <span className="flex text-center">
+                        💳 {userState.user.slice(0, 6)}
+                        ...{userState.user.slice(-4)}
+                      </span>
+                    </button>
+                  )}
+                </nav>
               </div>
             </div>
             <div className="py-6 px-5 space-y-6">
@@ -155,3 +209,4 @@ export default function Example() {
     </Popover>
   );
 }
+

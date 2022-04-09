@@ -1,24 +1,28 @@
 import { useState, useEffect } from 'react';
- 
+import { useSelector, useDispatch } from 'react-redux';
+
 import { ChevronUpIcon, UserIcon } from '@heroicons/react/solid';
 
 import PostReview from './postReview';
- import { useParams } from 'react-router-dom';
-import Dummy from '../Api/dummy2.json'
+import { daoThunks } from '../app/daoSlice';
+import { useParams } from 'react-router-dom';
+
 export default function Review(props) {
-   const { contract } = useParams();
- 
+  const dispatch = useDispatch();
+  const { contract } = useParams();
+  const userState = useSelector((state) => state.user);
+  const daoReviews = useSelector((state) => state.dao.activeDao?.reviews);
+  console.log(daoReviews);
 
   //check if user is part of the dao
-  const { data } = props;
 
   const upvote = (reviewID) => {
- 
+    dispatch(daoThunks.upvoteReview(reviewID));
   };
 
   return (
-    <div className="border mt-4 mx-4 ">
-      {Dummy.map((review) => (
+    <div className="border mt-4 mx-4">
+      {daoReviews?.map((review) => (
         <div key={review.id}>
           <div className="flex p-4">
             <UserIcon className="pt-2 w-7 self-start"></UserIcon>
@@ -57,7 +61,7 @@ export default function Review(props) {
             </div>
           </div>
 
-          {Dummy.replies?.map((reply) => (
+          {review.replies?.map((reply) => (
             <div>
               <div className="flex p-8 pl-20">
                 <img
@@ -88,7 +92,43 @@ export default function Review(props) {
         </div>
       ))}
 
-      
+      {userState.isLoggedIn && userState.user && (
+        //       <div >
+        //          <form className='flex align-center mx-8' onSubmit={()=>upvote()}>
+
+        //           <img className='rounded-full w-8 h-8' src='https://ph-avatars.imgix.net/3600866/original?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=30&h=30&fit=crop&dpr=2'/>
+        //           <textarea onChange={(e)=>setReview(e.target.value)}
+        //   class="
+        //   h-10
+        //     form-control
+        //     block
+        //     px-3
+        //     py-1.5
+        //     w-full
+        //     text-base
+        //     font-normal
+        //     text-gray-700
+        //     bg-white bg-clip-padding
+        //     border border-solid border-gray-300
+        //     rounded
+        //     transition
+        //     ease-in-out
+        //     mx-2
+        //     focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
+        //   "
+        //   id="exampleFormControlTextarea1"
+        //   rows="3"
+        //   placeholder="leave a review"
+        // ></textarea>
+
+        // <button type='submit' className='bg-purple-700 px-4 rounded-md mx-2'>
+        //   <div>send</div>
+        // </button>
+        // </form>
+
+        //        </div>
+        <PostReview />
+      )}
     </div>
   );
 }

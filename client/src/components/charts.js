@@ -14,13 +14,13 @@ import {
 // const data = [{date: "01/04/2021",value: 1139344830},{date: "01/04/2021",value: 11394344800},{date: "01/04/2021",value: 1139344800},{date: "01/04/2021",value: 1139344800}];
 
 export default function Charts() {
-  const daoState = useSelector((state) => state.dao.activeDao.dao);
+  const daoState = useSelector((state) => state?.dao?.activeDao?.dao);
   // const daoAnalytics = useSelector((state) => state.covalent.activeDaoTreasury);
   const topTokenHolders = useSelector(
     (state) => state.covalent.topTokenHolders
   );
 
-  const data = daoState.treasuryOrder?.map((date) => {
+  const data = daoState?.treasuryOrder?.map((date) => {
     return { date, treasury: daoState.treasuryOverTime[date] };
   });
 
