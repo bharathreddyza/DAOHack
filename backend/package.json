@@ -4,8 +4,17 @@
   "description": "Dao project backend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js"
   },
   "author": "maktha2",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "ipfs": "^0.62.2",
+    "orbit-db": "^0.28.3",
+    "uuid": "^8.3.2"
+  }
 }
