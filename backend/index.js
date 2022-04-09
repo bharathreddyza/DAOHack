@@ -5,6 +5,7 @@ const errorController = require('./controllers/errorController');
 const DaoModel = require('./models/daoModel');
 const daoRoutes = require('./routes/daoRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 
 DaoModel.create()
   .then(async () => {
@@ -25,6 +26,8 @@ app.use(cookieParser());
 app.use('/api/dao', daoRoutes);
 
 app.use('/api/review', reviewRoutes);
+
+app.use('/api/jobs', jobRoutes);
 
 app.use(errorController);
 
