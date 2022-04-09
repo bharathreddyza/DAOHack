@@ -204,6 +204,118 @@ class Dao {
   // --------------------------------------
   // ---------REVIEW methods end -----------
   // --------------------------------------
+
+  // --------------------------------------
+  // ---------JOB methods start -----------
+  // --------------------------------------
+
+  async newJob(jobObj) {
+    const existingDao = this.daos.get(jobObj.dao_id)[0];
+    if (!existingDao) {
+      throw new AppError(400, 'No Dao exists with that id');
+    }
+
+    let job = { id: uuidv4(), ...jobObj, open: true, appliedUsers: [] };
+    await this.jobs.put(job);
+    return job;
+  }
+
+  async getDaoJobs(daoID) {
+    const existingDao = this.daos.get(daoID)[0];
+    if (!existingDao) {
+      throw new AppError(400, 'No Dao exists with that id');
+    }
+
+    const jobs = await this.jobs.query((doc) => doc.dao_id === daoID);
+    return jobs;
+  }
+
+  async applyJob(jobID, user) {
+    const existingJob = this.jobs.get(jobID)[0];
+    if (!existingJob) {
+      throw new AppError(400, 'No Job exists with that id');
+    }
+    if (!existingJob.open) {
+      throw new AppError(400, 'This job is closed');
+    }
+    existingJob.appliedUsers.push(user);
+    await this.jobs.put(existingJob);
+
+    return existingJob.appliedUsers;
+  }
+
+  async getAllJobs() {
+    const jobs = this.jobs.get('');
+    return jobs;
+  }
+
+  // --------------------------------------
+  // ---------JOB methods end -----------
+  // --------------------------------------
+
+  // --------------------------------------
+  // ---------BLOG methods start -----------
+  // --------------------------------------
+  // id, name, banner, tags, description, text, publishedAt, length, user, upvotes
+  async getAllBlogs() {
+    const blogs = await this.blogs.get('');
+    return blogs;
+  }
+
+  async getBlog(id) {
+    const existingBlog = this.blogs.get(id)[0];
+    if (!existingBlog) {
+      throw new AppError(400, 'No blog exists with that id');
+    }
+
+    return existingBlog;
+  }
+
+  async newBlog(blogObj) {
+    const existingBlog = await this.blogs.query(
+      (doc) => doc.name === blogObj.name && doc.user === blogObj.user
+    );
+
+    if (existingBlog.length) {
+      throw new AppError(
+        400,
+        'Blog with that name already exists in your blogs.'
+      );
+    }
+
+    const blog = {
+      id: uuidv4(),
+      ...blogObj,
+      publishedAt: new Date().toISOString(),
+      upvotes: 0,
+      upvoteUsers: [],
+    };
+
+    await this.blogs.put(blog);
+    return blog;
+  }
+
+  async upvoteBlog(upvoteObj) {
+    const existingBlog = this.blogs.get(upvoteObj.blog_id)[0];
+    if (!existingBlog) {
+      throw new AppError(400, 'No blog exists with that id');
+    }
+    const didUpvote = existingBlog.upvoteUsers.find(
+      (user) => user === upvoteObj.user
+    );
+
+    if (didUpvote) {
+      throw new AppError(400, 'Already Upvoted');
+    }
+
+    existingBlog.upvotes += 1;
+    existingBlog.upvoteUsers.push(upvoteObj.user);
+    await this.blogs.put(existingBlog);
+    return existingBlog.upvotes;
+  }
+  // --------------------------------------
+  // ---------BLOG methods end -----------
+  // --------------------------------------
 }
 
 const DaoModel = new Dao(Ipfs, OrbitDB);

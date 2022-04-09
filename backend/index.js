@@ -6,6 +6,7 @@ const DaoModel = require('./models/daoModel');
 const daoRoutes = require('./routes/daoRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const jobRoutes = require('./routes/jobRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 
 DaoModel.create()
   .then(async () => {
@@ -28,6 +29,8 @@ app.use('/api/dao', daoRoutes);
 app.use('/api/review', reviewRoutes);
 
 app.use('/api/jobs', jobRoutes);
+
+app.use('/api/blog', blogRoutes);
 
 app.use(errorController);
 
