@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const errorController = require('./controllers/errorController');
 const DaoModel = require('./models/daoModel');
 const daoRoutes = require('./routes/daoRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 DaoModel.create()
   .then(async () => {
@@ -23,9 +24,11 @@ app.use(cookieParser());
 
 app.use('/api/dao', daoRoutes);
 
+app.use('/api/review', reviewRoutes);
+
 app.use(errorController);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`App up and running at port ${PORT} 👟️👟️`);
 });
