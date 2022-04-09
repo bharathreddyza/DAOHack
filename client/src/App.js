@@ -12,6 +12,8 @@ import UserProfile from './pages/UserProfile';
 import JobPage from './pages/JobPage';
 import NewsPage from './pages/NewsPage';
 import ArticlePage from './pages/ArticlePage';
+import Membership from './pages/Membership';
+import ProposalPage from './pages/ProposalPage';
 function App() {
    
   return (
@@ -24,7 +26,8 @@ function App() {
         <Route path="/jobBoard" element={<JobPage />} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/news/:id" element={<ArticlePage />} />
-
+        <Route path='/membership' element={<Membership/>}/>
+        <Route path='/proposal/:id' element={<ProposalPage/>}/>
 
       </Routes>
     </div>
