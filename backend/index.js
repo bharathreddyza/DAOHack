@@ -7,6 +7,7 @@ const daoRoutes = require('./routes/daoRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+require('./utils/cronJobs');
 
 DaoModel.create()
   .then(async () => {
