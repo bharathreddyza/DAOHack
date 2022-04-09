@@ -374,10 +374,12 @@ exports.daoDetail = catchAsync(async (req, res, next) => {
   const dao = await DaoModel.getDaoDetails(contract);
   const reviews = await DaoModel.getDaoReviews(contract);
   const jobs = await DaoModel.getDaoJobs(contract);
+  // const proposals = await DaoModel.getDaoProposals()
+  const proposals = await DaoModel.getDaoProposalsAndVotes(contract);
 
   return res.status(200).json({
     success: true,
-    data: { dao, reviews, jobs },
+    data: { dao, reviews, jobs, proposals },
   });
 });
 
@@ -405,5 +407,281 @@ exports.upvoteDao = catchAsync(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     data: { newVotes },
+  });
+});
+
+// test controllers
+const { request, GraphQLClient, gql } = require('graphql-request');
+const client = new GraphQLClient('https://hub.snapshot.org/graphql');
+
+const getProsalsReq = async (contractObj) => {
+  const variables = {
+    first: 500,
+    skip: 0,
+    state: 'all',
+    space: `${contractObj.snapshotId}`,
+  };
+
+  const query = gql`
+    query Proposals(
+      $first: Int!
+      $skip: Int!
+      $state: String!
+      $space: String
+      $space_in: [String]
+    ) {
+      proposals(
+        first: $first
+        skip: $skip
+        where: { space: $space, state: $state, space_in: $space_in }
+      ) {
+        id
+        title
+        body
+        start
+        end
+        state
+        author
+        created
+        choices
+        votes
+      }
+    }
+  `;
+
+  const { proposals } = await client.request(query, variables);
+
+  return proposals;
+};
+
+const getVotesReq = async (proposal) => {
+  const variables = {
+    first: 5000,
+    id: `${proposal}`,
+    orderBy: 'vp',
+    orderDirection: 'desc',
+  };
+
+  const query = gql`
+    query Votes(
+      $id: String!
+      $first: Int
+      $skip: Int
+      $orderBy: String
+      $orderDirection: OrderDirection
+      $voter: String
+    ) {
+      votes(
+        first: $first
+        skip: $skip
+        where: { proposal: $id, vp_gt: 0, voter: $voter }
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+      ) {
+        id
+        voter
+        created
+        choice
+        vp
+      }
+    }
+  `;
+
+  const { votes } = await client.request(query, variables);
+
+  return votes;
+};
+
+exports.getProposalsSnap = catchAsync(async (req, res, next) => {
+  const { contract } = req.params;
+  const snapshotId = daoList.find(
+    (dao) => dao.contractAddress === contract
+  )?.snapshotId;
+
+  if (!snapshotId) {
+    return next(new AppError(400, 'No Dao exists with that ID'));
+  }
+
+  const proposals = await getProsalsReq({ snapshotId, contract });
+
+  const proposalPromises = proposals.map(async (proposal) => {
+    proposal.dao_id = contract;
+    return await DaoModel.updateProposal(proposal);
+  });
+
+  await Promise.all(proposalPromises);
+
+  res.status(200).json({
+    success: true,
+    length: proposals.length,
+    data: proposals,
+  });
+});
+
+exports.getVotesSnap = catchAsync(async (req, res, next) => {
+  const { proposal } = req.params;
+
+  const votes = await getVotesReq(proposal);
+  await DaoModel.updateProposalVotes({ id: proposal, votes });
+
+  res.status(200).json({
+    success: true,
+    data: votes,
+  });
+});
+
+exports.getProposalsAndVotesSnap = catchAsync(async (req, res, next) => {
+  const { contract } = req.params;
+  const snapshotId = daoList.find(
+    (dao) => dao.contractAddress === contract
+  )?.snapshotId;
+
+  if (!snapshotId) {
+    return next(new AppError(400, 'No Dao exists with that ID'));
+  }
+
+  const proposals = await getProsalsReq({ contract, snapshotId });
+
+  const proposalVotesPromise = proposals.map(async (proposal) => {
+    // To calculate choices
+    const choiceCounts = {};
+    proposal.choices.forEach((el) => {
+      choiceCounts[`${el}`] = 0;
+    });
+
+    proposal.dao_id = contract;
+
+    let votes = await getVotesReq(proposal.id);
+    // calculate votes counts
+    votes.forEach((vote) => {
+      if (choiceCounts.hasOwnProperty(proposal.choices[vote.choice - 1])) {
+        choiceCounts[proposal.choices[vote.choice - 1]] += 1;
+      } else {
+        console.log('Vote type not found');
+      }
+    });
+
+    proposal.voteCounts = choiceCounts;
+    await DaoModel.updateProposal(proposal);
+    // we need to run this after await updateProposal because we dont want to store allVotes array directly on each proposal object in database
+    if (votes.length > 20) {
+      votes = votes.slice(0, 20);
+    }
+    proposal.allVotes = votes;
+
+    return await DaoModel.updateProposalVotes({ id: proposal.id, votes });
+  });
+  await Promise.all(proposalVotesPromise);
+  // await Promise.all(votesArr);
+  console.log('Proposals length', proposals.length);
+
+  return res.status(200).json({
+    success: true,
+    length: proposals.length,
+    data: {
+      proposals,
+    },
+  });
+});
+
+// exports.getAllDaoProposalsAndVotes = catchAsync(async (req, res, next) => {
+// for (let i = 0; i < daoList.length; i++) {
+//   const { contractAddress: contract, snapshotId, contractName } = daoList[i];
+
+//   const proposals = await getProsalsReq({ contract, snapshotId });
+
+//   const proposalVotesPromise = proposals.map(async (proposal) => {
+//     proposal.dao_id = contract;
+//     await DaoModel.updateProposal(proposal);
+//     const votes = await getVotesReq(proposal.id);
+//     proposal.allVotes = votes;
+//     return await DaoModel.updateProposalVotes({ id: proposal.id, votes });
+//   });
+
+//   await Promise.all(proposalVotesPromise);
+//   console.log(`Contract ${contractName} has ${proposals.length} proposals`);
+//   console.log(`${i} completed`);
+// }
+// });
+
+exports.getProposals = catchAsync(async (req, res, next) => {
+  const { contract } = req.params;
+  const snapshotId = daoList.find(
+    (dao) => dao.contractAddress === contract
+  )?.snapshotId;
+
+  if (!snapshotId) {
+    return next(new AppError(400, 'No Dao exists with that ID'));
+  }
+
+  const proposals = await DaoModel.getDaoProposals(contract);
+  // console.log(proposals.every((prop) => prop.hasOwnProperty('allVotes')));
+  res.status(200).json({
+    success: true,
+    length: proposals.length,
+    data: proposals,
+  });
+});
+
+exports.getVotes = catchAsync(async (req, res, next) => {
+  const { proposal } = req.params;
+
+  const votes = await DaoModel.getProposalVotes(proposal);
+
+  if (!votes) {
+    return next(new AppError(400, 'No votes found. Please try again'));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: votes,
+  });
+});
+
+exports.getProposalsAndVotes = catchAsync(async (req, res, next) => {
+  const { contract } = req.params;
+  const contractExists = daoList.find(
+    (dao) => dao.contractAddress === contract
+  );
+
+  if (!contractExists) {
+    return next(new AppError(400, 'No Dao exists with that ID'));
+  }
+
+  // const proposalsWithVotes = await DaoModel.getDaoProposalsAndVotes(contract);
+  const proposals = await DaoModel.getDaoProposals(contract);
+  console.log('Typeeeeeeeeee', typeof proposals[0]);
+  const votesRes = proposals.map(async (proposal) => {
+    const votes = await DaoModel.getProposalVotes(proposal.id);
+    proposal.allVotes = votes;
+    return true;
+  });
+
+  await Promise.all(votesRes);
+
+  return res.status(200).json({
+    success: true,
+    length: proposals.length,
+    data: proposals,
+  });
+});
+
+exports.getAllProposals = catchAsync(async (req, res, next) => {
+  const proposals = await DaoModel.getAllProposals();
+
+  res.status(200).json({
+    success: true,
+    length: proposals.length,
+    data: proposals,
+  });
+});
+
+exports.getAllVotes = catchAsync(async (req, res, next) => {
+  const votes = await DaoModel.getAllVotes();
+
+  res.status(200).json({
+    success: true,
+    length: votes.length,
+    data: votes,
   });
 });

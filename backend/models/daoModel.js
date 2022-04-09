@@ -49,6 +49,12 @@ class Dao {
 
     this.blogs = await this.orbitdb.docs('dao.blogs', docStoreOptions);
     await this.blogs.load();
+
+    this.proposals = await this.orbitdb.docs('dao.proposals', docStoreOptions);
+    await this.proposals.load();
+
+    this.votes = await this.orbitdb.docs('dao.votes', docStoreOptions);
+    await this.votes.load();
   }
 
   // --------------------------------------
@@ -64,6 +70,9 @@ class Dao {
     }
 
     await this.daos.put(dao);
+    // since every review and job will be an object we dont need this
+    // await this.reviews.put({ id: uuidv4(), dao_id: dao.id });
+    // await this.jobs.put({ id: uuidv4(), dao_id: dao.id });
     return dao;
   }
 
@@ -315,6 +324,205 @@ class Dao {
   }
   // --------------------------------------
   // ---------BLOG methods end -----------
+  // --------------------------------------
+
+  // --------------------------------------
+  // ---------Proposal methods start -----------
+  // --------------------------------------
+  async newProposal(proposalObj) {
+    const existingProposal = this.proposals.get(proposalObj.id)[0];
+    if (existingProposal) {
+      throw new AppError(400, 'Proposal with same ID already exists.');
+    }
+    await this.proposals.put(proposalObj);
+    return proposalObj;
+  }
+
+  async updateProposal(proposalObj) {
+    const existingProposal = this.proposals.get(proposalObj.id)[0];
+    if (!existingProposal) {
+      // console.log('No proposal found, Creating new proposal');
+      return this.newProposal(proposalObj);
+    }
+    const proposal = { ...existingProposal, ...proposalObj };
+    await this.proposals.put(proposal);
+    return proposal;
+  }
+
+  async getDaoProposals(daoID) {
+    const proposals = await this.proposals.query((doc) => doc.dao_id === daoID);
+    return proposals;
+  }
+
+  async getAllProposals() {
+    const proposals = this.proposals.get('');
+    return proposals;
+  }
+
+  // --------------------------------------
+  // ---------Proposal methods end -----------
+  // --------------------------------------
+
+  // --------------------------------------
+  // ---------Votes methods start -----------
+  // --------------------------------------
+  async newProposalVotes(votesObj) {
+    const existingVotes = this.votes.get(votesObj.id)[0];
+    if (existingVotes) {
+      throw new AppError(400, 'Existing votes found. Please try updating.');
+    }
+
+    await this.votes.put(votesObj);
+    return votesObj;
+  }
+
+  async updateProposalVotes(votesObj) {
+    const existingProposal = this.proposals.get(votesObj.id)[0];
+    if (!existingProposal) {
+      throw new Error(
+        'No proposal found with that ID, hence votes are useless'
+      );
+    }
+    let existingVotes = this.votes.get(votesObj.id)[0];
+    if (!existingVotes) {
+      // console.log('No existing votes found, creating new votes.');
+      return await this.newProposalVotes(votesObj);
+    }
+    existingVotes.votes = votesObj.votes;
+    await this.votes.put(existingVotes);
+    return existingVotes;
+  }
+
+  async getProposalVotes(proposalID) {
+    const existingProposal = this.proposals.get(proposalID)[0];
+    if (!existingProposal) {
+      throw new Error('No proposal found with that ID');
+    }
+
+    const votes = this.votes.get(proposalID)[0];
+    return votes;
+  }
+
+  async getAllVotes() {
+    const votes = this.votes.get('');
+    return votes;
+  }
+
+  async getDaoProposalsAndVotes(daoID) {
+    let proposals = await this.proposals.query((doc) => doc.dao_id === daoID);
+    for (let i = 0; i < proposals.length; i++) {
+      const votes = this.votes.get(proposals[i].id)[0];
+      proposals[i].allVotes = votes;
+    }
+    return proposals;
+  }
+  // --------------------------------------
+  // ---------Votes methods end -----------
+  // --------------------------------------
+
+  // --------------------------------------
+  // ---------Admin methods start -----------
+  // --------------------------------------
+
+  async GET_ALL_DATA() {
+    const daos = this.daos.get('');
+    const reviews = this.reviews.get('');
+    const jobs = this.jobs.get('');
+    return { daos, reviews, jobs };
+  }
+
+  async GET_ALL_JOBS() {
+    const jobs = this.jobs.get('');
+    return jobs;
+  }
+
+  async DELETE_REVIEW_BY_ID(id) {
+    await this.reviews.del(id);
+    return true;
+  }
+
+  async DELETE_ALL_DAOS() {
+    const daos = await this.daos.get('');
+    for (let i = 0; i < daos.length; i++) {
+      const dao = daos[i];
+      await this.daos.del(`${dao.id}`);
+    }
+    return true;
+  }
+
+  async DELETE_ALL_REVIEWS() {
+    const reviews = await this.reviews.get('');
+    for (let i = 0; i < reviews.length; i++) {
+      const review = reviews[i];
+      await this.reviews.del(`${review.id}`);
+    }
+    return true;
+  }
+
+  async DELETE_ALL_JOBS() {
+    const jobs = await this.jobs.get('');
+    for (let i = 0; i < jobs.length; i++) {
+      const job = jobs[i];
+      await this.jobs.del(`${job.id}`);
+    }
+    return true;
+  }
+
+  async DELETE_ALL_BLOGS() {
+    const blogs = await this.blogs.get('');
+    for (let i = 0; i < blogs.length; i++) {
+      const blog = blogs[i];
+      await this.blogs.del(`${blog.id}`);
+    }
+    return true;
+  }
+
+  async DELETE_ALL_PROPOSALS_AND_VOTES() {
+    const proposals = await this.proposals.get('');
+    const votes = await this.votes.get('');
+    for (let i = 0; i < proposals.length; i++) {
+      const proposal = proposals[i];
+      await this.proposals.del(`${proposal.id}`);
+    }
+    for (let i = 0; i < votes.length; i++) {
+      const vote = votes[i];
+      await this.votes.del(`${vote.id}`);
+    }
+    return true;
+  }
+
+  async DELETE_ALL_DATA() {
+    await this.DELETE_ALL_DAOS();
+    await this.DELETE_ALL_REVIEWS();
+    await this.DELETE_ALL_JOBS();
+  }
+
+  // async ADD_UPVOTE_USERS_DAOS() {
+  //   const daos = await this.daos.get('');
+  //   for (let i = 0; i < daos.length; i++) {
+  //     const dao = daos[i];
+  //     dao.upvoteUsers = [];
+  //     await this.daos.put(dao);
+  //   }
+  //   return true;
+  // }
+
+  // async addUpVotes() {
+  //   const daos = await this.daos.get('');
+  //   for (let i = 0; i < daos.length; i++) {
+  //     const dao = daos[i];
+  //     await this.daos.put({ ...dao, upvotes: 0 });
+  //   }
+  //   return true;
+  // }
+  // async DELETE_ALL_DATA(){
+  //   this.daos.del('');
+  //   this.reviews.del('');
+  //   this.jobs.del('');
+  //   return true;
+  // }
+  // --------------------------------------
+  // ---------Admin methods end -----------
   // --------------------------------------
 }
 
