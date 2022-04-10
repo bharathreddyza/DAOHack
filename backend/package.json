@@ -4,7 +4,8 @@
   "description": "Dao project backend",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "nodemon index.js"
   },
   "author": "maktha2",
   "license": "ISC",
@@ -13,7 +14,9 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "graphql-request": "^4.2.0",
     "ipfs": "^0.62.2",
+    "node-cron": "^3.0.0",
     "orbit-db": "^0.28.3",
     "uuid": "^8.3.2"
   }

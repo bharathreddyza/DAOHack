@@ -72,7 +72,7 @@ class Dao {
       throw new AppError(400, 'Dao with same id already exists');
     }
 
-    await this.daos.put(dao);
+    await this.daos.put({ dao, upvotes: 0, upvoteUsers: [] });
     // since every review and job will be an object we dont need this
     // await this.reviews.put({ id: uuidv4(), dao_id: dao.id });
     // await this.jobs.put({ id: uuidv4(), dao_id: dao.id });

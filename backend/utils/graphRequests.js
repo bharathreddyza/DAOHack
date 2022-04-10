@@ -36,7 +36,7 @@ const client = new GraphQLClient('https://hub.snapshot.org/graphql');
 
 exports.getProsalsReq = async (contractObj) => {
   const variables = {
-    first: 500,
+    first: 50,
     skip: 0,
     state: 'all',
     space: `${contractObj.snapshotId}`,

@@ -278,10 +278,12 @@ cron.schedule('*/15 * * * *', async () => {
   console.log('Running cron : getAllDaoProposalsAndVotes');
   for (let i = 0; i < daoList.length; i++) {
     try {
-      if (i % 3 == 0 && i !== 0) {
+      // if (i % 3 == 0 && i !== 0) {
+      if (i > 0) {
         const sleep = util.promisify(setTimeout);
         await sleep(1000 * 10);
       }
+      // }
       await daoProposalAndVotesFunc(i);
     } catch (error) {
       console.log('Cron : Proposal and Votes over time error', error);

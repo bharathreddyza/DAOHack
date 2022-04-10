@@ -72,7 +72,7 @@ exports.applyJob = catchAsync(async (req, res, next) => {
   let user = req.cookies.user;
   if (!user) {
     user = req.header('user');
-    if (!user) {
+    if (!user || user === 'null') {
       return next(new AppError(400, 'Please connect your wallet to upvote.'));
     }
   }
