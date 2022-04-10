@@ -86,7 +86,9 @@ export default function ProposalPage() {
                   closed
                 </h1>
               ) : (
-                <h1 className="p-1 bg-green-200 text-green-400">open</h1>
+                <h1 className="p-1 rounded-md m-1 bg-green-200 text-green-400">
+                  open
+                </h1>
               )}
             </div>
           </div>

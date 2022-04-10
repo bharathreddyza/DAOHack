@@ -18,7 +18,13 @@ export default function Table(props) {
               <div className="flex flex-wrap items-center">
                 <div className="relative w-full px-4 max-w-full flex-grow flex-1 ">
                   <h3 className="font-semibold text-lg text-white">Daos </h3>
-                  <h1>Last Updated at {data[0]?.lastUpdatedAt.slice(0, 20)}</h1>
+                  <h1 className="text-sm">
+                    Last Updated at{' '}
+                    {new Date(data[0]?.lastUpdatedAt).toLocaleString('en-GB', {
+                      dateStyle: 'full',
+                      timeStyle: 'long',
+                    })}
+                  </h1>
                 </div>
               </div>
             </div>
@@ -75,7 +81,7 @@ export default function Table(props) {
                       </td>
                       {/* coin value */}
                       <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                        {dao.quote_rate.toFixed(4)}
+                        {dao.quote_rate.toFixed(3)}
                       </td>
 
                       {/* <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
