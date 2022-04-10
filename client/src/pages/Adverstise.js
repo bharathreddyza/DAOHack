@@ -4,7 +4,17 @@ import { Framework } from '@superfluid-finance/sdk-core';
 import { ethers } from 'ethers';
 import axios from 'axios';
 
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+const signer = provider.getSigner();
+
 export default function Adverstise() {
+  const [recipient, setRecipient] = useState(
+    '0x8c0Db915Bb69E58751cF1170ce5df0342670b4D4'
+  );
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [flowRate, setFlowRate] = useState('');
+  const [flowRateDisplay, setFlowRateDisplay] = useState('463');
   const [state, setState] = useState({
     redirect: '',
     image: '',
@@ -23,6 +33,21 @@ export default function Adverstise() {
       image: e,
     });
   };
+
+  function calculateFlowRate(amount) {
+    if (typeof Number(amount) !== 'number' || isNaN(Number(amount)) === true) {
+      alert('You can only calculate a flowRate based on a number');
+      return;
+    } else if (typeof Number(amount) === 'number') {
+      if (Number(amount) === 0) {
+        return 0;
+      }
+      const amountInWei = ethers.BigNumber.from(amount);
+      const monthlyAmount = ethers.utils.formatEther(amountInWei.toString());
+      const calculatedFlowRate = monthlyAmount * 3600 * 24 * 30;
+      return calculatedFlowRate;
+    }
+  }
 
   const testAuthentication = (e) => {
     e.preventDefault();
@@ -45,33 +70,86 @@ export default function Adverstise() {
         //handle error here
       });
   };
-
   const [hash, setHash] = useState('');
-  // const provider = new ethers.providers.InfuraProvider(
-  //     "kovan",
-  //     "62052ff1d12f437c9f09f2c31bd1e7a5"
-  //   );
-  //   const sf = await Framework.create({
-  //     networkName: "kovan",
-  //     provider
-  //   });
 
-  //   const signer = sf.createSigner({ privateKey: "d14af01380a436ded49f911769479b2de91ecc120f461dd75f03e974dca91dde", provider });
-  // load the usdcx SuperToken via the Framework
-  // const usdcx = sf.loadSuperToken("0xCAa7349CEA390F89641fe306D93591f87595dc1F");
+  function calculateFlowRate(amount) {
+    if (typeof Number(amount) !== 'number' || isNaN(Number(amount)) === true) {
+      alert('You can only calculate a flowRate based on a number');
+      return;
+    } else if (typeof Number(amount) === 'number') {
+      if (Number(amount) === 0) {
+        return 0;
+      }
+      const amountInWei = ethers.BigNumber.from(amount);
+      const monthlyAmount = ethers.utils.formatEther(amountInWei.toString());
+      const calculatedFlowRate = monthlyAmount * 3600 * 24 * 30;
+      return calculatedFlowRate;
+    }
+  }
 
-  // // create an approve operation
-  // const approveOperation = usdcx.approve({ receiver: "0xab...", amount: ethers.utils.parseUnits("100").toString() });
+  const handleRecipientChange = (e) => {
+    setRecipient(() => ([e.target.name] = e.target.value));
+  };
 
-  // // execute the approve operation, passing in a signer
-  // const txn = await approveOperation.exec(signer);
+  const handleFlowRateChange = (e) => {
+    setFlowRate(() => ([e.target.name] = e.target.value));
+    // if (typeof Number(flowRate) === "number") {
+    let newFlowRateDisplay = calculateFlowRate(e.target.value);
+    setFlowRateDisplay(newFlowRateDisplay.toString());
+    // setFlowRateDisplay(() => calculateFlowRate(e.target.value));
+    // }
+  };
 
-  // // wait for the transaction to be confirmed
-  // const receipt = await txn.wait();
+  //where the Superfluid logic takes place
+  async function createNewFlow(recipient, flowRate) {
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const sf = await Framework.create({
+      chainId: Number(chainId),
+      provider: provider,
+    });
 
-  // // or you can create and execute the transaction in a single line
-  // const approveTxn = await usdcx.approve({ receiver: "0xab...", amount: ethers.utils.parseUnits("100").toString() }).exec(signer);
-  // const approveTxnReceipt = await approveTxn.wait();
+    const results = await sf.query.listAllSuperTokens(
+      { isListed: true },
+      { skip: 5, take: 150 },
+      {
+        orderBy: 'createdAtBlockNumber',
+        orderDirection: 'desc',
+      }
+    );
+
+    const DAIx = '0xe3cb950cb164a31c66e32c320a800d477019dcff';
+
+    try {
+      // console.log(1,flowRate,recipient)
+      const createFlowOperation = sf.cfaV1.createFlow({
+        flowRate: flowRate,
+        receiver: recipient,
+        superToken: DAIx,
+        // userData?: string
+      });
+
+      console.log('Creating your stream...');
+
+      const result = await createFlowOperation.exec(signer);
+      console.log(result);
+
+      console.log(
+        `Congrats - you've just created a money stream!
+       View Your Stream At: https://app.superfluid.finance/dashboard/${recipient}
+       Network: matic
+       Super Token: DAIx
+       Sender: 0xDCB45e4f6762C3D7C61a00e96Fb94ADb7Cf27721
+       Receiver: ${recipient},
+       FlowRate: ${flowRate}
+       `
+      );
+    } catch (error) {
+      console.log(
+        "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
+      );
+      console.error(error);
+    }
+  }
   return (
     <div>
       <div>
@@ -105,6 +183,39 @@ export default function Adverstise() {
       <div>
         <h1>your advertisment Hash</h1>
         <input className="border rounded-md p-1 " value={hash} />
+      </div>
+
+      <div>
+        <div className="border p-4 ">
+          <h1 className="text-2xl">Create Super Stream</h1>
+          <form className="">
+            {/* <input
+           name="flowRate"
+           value={flowRate}
+           className="w-60 p-4 m-3"
+           onChange={handleFlowRateChange}
+           placeholder="Enter a flowRate in wei/second"
+         ></input> */}
+            <button
+              className="bg-purple-300 p-4 m-2 rounded-md"
+              onClick={() => {
+                createNewFlow(
+                  '0x8c0Db915Bb69E58751cF1170ce5df0342670b4D4',
+                  flowRate
+                );
+              }}
+            >
+              {' '}
+              Click to Create Your Stream
+            </button>
+          </form>
+          <div className="">
+            <p>Your are going to pay</p>
+            <p>
+              <b>${flowRateDisplay !== ' ' ? flowRateDisplay : 0}</b> DAIx/month
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
