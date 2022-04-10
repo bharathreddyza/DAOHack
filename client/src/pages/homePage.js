@@ -8,7 +8,7 @@ import Tables from '../components/table';
 import Loading from '../components/loading';
 import { daoThunks } from '../app/daoSlice';
 import Banner from '../components/Banners';
-
+import Tags from '../components/Tags';
 // import Banner from '../Assets/banner.png'
 export default function HomePage() {
   const dispatch = useDispatch();
