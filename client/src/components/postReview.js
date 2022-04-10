@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
- // import { reviewThunks } from '../app/reviewSlice';
- 
+import { useSelector, useDispatch } from 'react-redux';
+// import { reviewThunks } from '../app/reviewSlice';
+import { daoThunks } from '../app/daoSlice';
+
 export default function PostReview() {
   const { contract } = useParams();
   const [review, setReview] = useState('');
- 
+  const dispatch = useDispatch();
+
   const postReview = (e) => {
     e.preventDefault();
     console.log(contract);
-    //send review
-     setReview('');
+    dispatch(daoThunks.postReview(review, contract));
+    setReview('');
   };
   return (
     <div>
