@@ -32,34 +32,49 @@ export default function Charts() {
   // });
 
   console.log(data);
+  const treasuries = data?.map((item) => item.treasury);
+
+  const max = Math.max(...treasuries);
+  const intervals = [];
+  const raise = parseInt(max / 3);
+  for (let i = 0; i <= max; i += raise) {
+    intervals.push(i);
+  }
+
+  console.log(intervals);
   useEffect(() => {}, [data]);
 
   return (
-    <div className="ml-4 mt-10">
-      <LineChart
-        width={700}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line
-          type="monotone"
-          dataKey="treasury"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }}
-        />
-        {/* <Line type="monotone" dataKey="value" stroke="#82ca9d" /> */}
-      </LineChart>
+    <div className="mt-28 mx-10">
+      <h1 className="mb-5 text-left text-2xl text-gray-700">
+        Treasury Over Time
+      </h1>
+      <div className="flex justify-center">
+        <LineChart
+          width={800}
+          height={400}
+          data={data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis ticks={intervals} />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="treasury"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
+          {/* <Line type="monotone" dataKey="value" stroke="#82ca9d" /> */}
+        </LineChart>
+      </div>
     </div>
   );
 }

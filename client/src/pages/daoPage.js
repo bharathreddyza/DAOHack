@@ -44,31 +44,41 @@ export default function DaoPage() {
       <div className="flex container justify-center">
         <div
           onClick={() => setCounter(1)}
-          className="selector hover:text-purple-600 p-4 px-12 border cursor-pointer"
+          className={`selector hover:text-purple-600 p-4 px-12 border cursor-pointer ${
+            counter === 1 && `text-purple-600`
+          }`}
         >
           <h1>Reviews</h1>
         </div>
         <div
           onClick={() => setCounter(2)}
-          className="selector hover:text-purple-600 p-4 px-12 border cursor-pointer"
+          className={`selector hover:text-purple-600 p-4 px-12 border cursor-pointer ${
+            counter === 2 && `text-purple-600`
+          }`}
         >
           <h1>Job Board</h1>
         </div>
         <div
           onClick={() => setCounter(3)}
-          className="selector hover:text-purple-600 p-4 px-12 border cursor-pointer"
+          className={`selector hover:text-purple-600 p-4 px-12 border cursor-pointer ${
+            counter === 3 && `text-purple-600`
+          }`}
         >
           <h1>Analytics</h1>
         </div>
         <div
           onClick={() => setCounter(4)}
-          className="selector hover:text-purple-600 p-4 px-12 border cursor-pointer"
+          className={`selector hover:text-purple-600 p-4 px-12 border cursor-pointer ${
+            counter === 4 && `text-purple-600`
+          }`}
         >
           <h1>Proposals</h1>
         </div>
         <div
           onClick={() => setCounter(5)}
-          className="selector hover:text-purple-600 p-4 px-12 border cursor-pointer"
+          className={`selector hover:text-purple-600 p-4 px-12 border cursor-pointer ${
+            counter === 5 && `text-purple-600`
+          }`}
         >
           <h1>Coalitions</h1>
         </div>

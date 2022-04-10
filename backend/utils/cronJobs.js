@@ -86,7 +86,7 @@ const getOverview = async (daoTickers, daoAddresses, pageSize = 100) => {
 };
 
 // addDaosTodatabase
-cron.schedule('53 * * * *', async () => {
+cron.schedule('10 * * * *', async () => {
   try {
     console.log('Running cron : addDaosTodatabase');
     const daoTickers = [];
@@ -274,7 +274,7 @@ const daoProposalAndVotesFunc = async (i) => {
   }
 };
 
-cron.schedule('12 * * * *', async () => {
+cron.schedule('15 * * * *', async () => {
   console.log('Running cron : getAllDaoProposalsAndVotes');
   for (let i = 0; i < daoList.length; i++) {
     try {
@@ -294,7 +294,7 @@ cron.schedule('12 * * * *', async () => {
 });
 
 // getAllDaoDelegates
-cron.schedule('12 * * * *', async () => {
+cron.schedule('20 * * * *', async () => {
   console.log('Running cron : getAllDaoDelegates');
   for (let i = 0; i < daoList.length; i++) {
     try {
