@@ -29,7 +29,7 @@ export default function PostReview() {
           />
           <textarea
             onChange={(e) => setReview(e.target.value)}
-            class="
+            className="
       h-10
         form-control
         block

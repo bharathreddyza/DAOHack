@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // import { reviewThunks } from '../app/reviewSlice';
+import { UserIcon } from '@heroicons/react/solid';
 import { daoThunks } from '../app/daoSlice';
 
 export default function PostReview() {
@@ -22,14 +23,15 @@ export default function PostReview() {
           onSubmit={(e) => postReview(e)}
           className="flex align-center mx-8"
         >
-          <img
+          <UserIcon className="w-9 h-9 text-gray-600"></UserIcon>
+          {/* <img
             className="rounded-full w-8 h-8"
             src="https://ph-avatars.imgix.net/3600866/original?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=30&h=30&fit=crop&dpr=2"
             alt="Img"
-          />
+          /> */}
           <textarea
             onChange={(e) => setReview(e.target.value)}
-            class="
+            className="
       h-10
         form-control
         block
@@ -53,8 +55,11 @@ export default function PostReview() {
             value={review}
           ></textarea>
 
-          <button type="submit" className="bg-purple-700 px-4 rounded-md mx-2">
-            <div>send</div>
+          <button
+            type="submit"
+            className="bg-purple-500 text-white px-4 rounded-md mx-2"
+          >
+            <div>Post</div>
           </button>
         </form>
       </div>

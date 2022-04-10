@@ -98,7 +98,7 @@ export default function Review(props) {
 
         //           <img className='rounded-full w-8 h-8' src='https://ph-avatars.imgix.net/3600866/original?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=30&h=30&fit=crop&dpr=2'/>
         //           <textarea onChange={(e)=>setReview(e.target.value)}
-        //   class="
+        //   className="
         //   h-10
         //     form-control
         //     block

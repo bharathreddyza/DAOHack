@@ -88,7 +88,7 @@ class Dao {
       // throw new AppError(400, 'No Dao exists with that ID');
     }
 
-    existingDao = { ...existingDao, ...dao };
+    existingDao = { ...existingDao, ...dao, upvotes: 0, upvoteUsers: [] };
     return await this.daos.put(existingDao);
   }
 
