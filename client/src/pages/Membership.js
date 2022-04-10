@@ -50,7 +50,7 @@ export default function Membership() {
 
                 {state.isMember &&
                 <div className="flex items-center mt-20 ml-10 ">
-                    <h1 className="text-3xl mr-20">Membership Nft:</h1>
+                    <h1 className="text-3xl mr-20">Membership NFT:</h1>
                        <img  className="w-40 p-4 border rounded-md"  src={Daomember}/>
                    </div>}
 

@@ -15,9 +15,15 @@ export default function JobPage() {
 
   return (
     <div>
-      {isLoading && <Loading></Loading>}
-      {!isLoading && jobState.allJobs?.length && (
-        <JobBoard jobs={jobState.allJobs}></JobBoard>
+      {isLoading ? <Loading></Loading> : ''}
+      {!isLoading ? (
+        jobState.allJobs?.length ? (
+          <JobBoard jobs={jobState.allJobs}></JobBoard>
+        ) : (
+          ''
+        )
+      ) : (
+        ''
       )}
     </div>
   );

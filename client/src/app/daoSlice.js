@@ -75,6 +75,16 @@ export const daoThunks = {
             overviews.message || 'Something went wrong. Please try again.'
           );
         }
+        for (let i = 0; i < overviews.data.length; i++) {
+          const overview = overviews.data[i];
+          const reqContract = daoList.find(
+            (dao) => dao.contractAddress === overview.id
+          );
+          if (!reqContract.logoUrl.includes('covalenthq')) {
+            overviews.data[i].logo_url = reqContract.logoUrl;
+          }
+        }
+
         const sortedDaos = overviews.data.sort((a, b) => a.rank - b.rank);
         // const reqOptions = {
         //   headers: {

@@ -8,6 +8,7 @@ import { MenuIcon, XIcon } from '@heroicons/react/outline';
 // import { covalentThunks } from '../app/covalentSlice';
 import { useNavigate } from 'react-router-dom';
 
+import Banner from '../Assets/Dao.png'
 export default function Example() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ export default function Example() {
               onClick={() => navigate('/')}
               className="cursor-pointer text-3xl"
             >
-              DAOfordao
+              <img className='w-20' src={Banner}/>
             </h1>
           </div>
           <div className="-mr-2 -my-2 md:hidden">
@@ -73,7 +74,7 @@ export default function Example() {
               href="#"
               className="cursor-pointer text-base font-medium text-gray-500 hover:text-gray-900"
             >
-              membership
+              Membership
             </a>
             <a
               onClick={() => navigate('/advertise')}
