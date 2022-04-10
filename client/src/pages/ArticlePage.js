@@ -1,27 +1,43 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { blogThunks } from '../app/blogSlice';
 import Loading from '../components/loading';
 
 export default function ArticlePage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const activeBlog = useSelector((state) => state.blog.activeBlog);
   const isLoading = useSelector((state) => state.ui.pageLoading);
+  const isMember = useSelector((state) => state.user.isMember);
   const { id } = useParams();
+
+  useEffect(() => {
+    if (!isMember) {
+      if (
+        window.confirm(
+          'This newsletter is only available to members.\n\nBuy Membership?'
+        )
+      ) {
+        navigate('/membership');
+      } else {
+        navigate('/news');
+      }
+    }
+  }, [isMember, navigate]);
 
   useEffect(() => {
     dispatch(blogThunks.getBlogDetails(id));
   }, [dispatch, id]);
 
-  console.log(activeBlog);
+  // console.log(activeBlog);
 
   const paragraphs = activeBlog.text?.split('\n');
 
   return (
     <React.Fragment>
       {isLoading && <Loading></Loading>}
-      {!isLoading && (
+      {!isLoading && isMember && (
         <main class="relative container mx-auto bg-white px-4">
           <div class="relative -mx-4 top-0 pt-[17%] overflow-hidden">
             <img

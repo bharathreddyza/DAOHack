@@ -73,7 +73,32 @@ export const daoThunks = {
             overviews.message || 'Something went wrong. Please try again.'
           );
         }
-        dispatch(daoActions.setOverviews(overviews.data));
+        const sortedDaos = overviews.data.sort((a, b) => a.rank - b.rank);
+        // const reqOptions = {
+        //   headers: {
+        //     'Access-Control-Allow-Origin': '*',
+        //     credentials: 'include',
+        //   },
+        // };
+        // const imageChecksProm = sortedDaos.map(async (dao) => {
+        //   const res = await fetch(dao.logo_url, {
+        //     headers: {
+        //       'Access-Control-Allow-Origin': '*',
+        //       credentials: 'include',
+        //       'Content-type': 'image/webp',
+        //     },
+        //   });
+        //   return res;
+        // });
+        // const imageChecks = await Promise.all(imageChecksProm);
+        // console.log(imageChecks);
+        // // imageChecks.forEach((status, i) => {
+        // //   if (status !== 200) {
+        // //     console.log(sortedDaos[i].contract_name, ' does not have an image');
+        // //   }
+        // // });
+
+        dispatch(daoActions.setOverviews(sortedDaos));
         dispatch(uiActions.stopLoading());
       } catch (error) {
         console.log(error);
@@ -131,7 +156,9 @@ export const daoThunks = {
         );
         const data = await res.json();
         if (res.status !== 200 || !data.success) {
-          throw new Error('Unable to post review now. please try again later.');
+          throw new Error(
+            data.message || 'Unable to post review now. please try again later.'
+          );
         }
 
         dispatch(daoActions.postReview(data.data));
@@ -166,10 +193,11 @@ export const daoThunks = {
           'http://localhost:5000/api/dao/upvote',
           requestOptions
         );
-
         const data = await response.json();
         if (response.status !== 200 || !data.success) {
-          throw new Error('Unable to upvote. please try again.');
+          throw new Error(
+            data.message || 'Unable to upvote. please try again.'
+          );
         }
 
         dispatch(daoActions.upvoteDao(data.data.newVotes));
@@ -207,7 +235,9 @@ export const daoThunks = {
 
         const data = await response.json();
         if (response.status !== 200 || !data.success) {
-          throw new Error('Unable to upvote. please try again.');
+          throw new Error(
+            data.message || 'Unable to upvote. please try again.'
+          );
         }
         console.log(data.data.newVotes);
         dispatch(

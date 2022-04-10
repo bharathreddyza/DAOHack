@@ -21,7 +21,7 @@ export default function Review(props) {
   };
 
   return (
-    <div className="border mt-4 mx-4">
+    <div className="border py-5 mt-4 mx-4">
       {daoReviews?.map((review) => (
         <div key={review.id}>
           <div className="flex p-4">
@@ -91,6 +91,12 @@ export default function Review(props) {
           ))}
         </div>
       ))}
+
+      {!userState.isLoggedIn && (
+        <h2 className=" flex text-gray-700 my-5 justify-center items-center">
+          Connect Your Wallet to give Reviews and Replies
+        </h2>
+      )}
 
       {userState.isLoggedIn && userState.user && (
         //       <div >

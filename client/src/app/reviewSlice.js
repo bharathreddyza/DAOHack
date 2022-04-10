@@ -26,7 +26,7 @@ const reviewSlice = createSlice({
 
 export const reviewActions = reviewSlice.actions;
 
-const postReview = async (review, contract) => {
+const postNewReview = async (review, contract) => {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -37,7 +37,7 @@ const postReview = async (review, contract) => {
     requestOptions
   );
   const res = await req.json();
-  console.log(res);
+  // console.log(res);
   return res;
 };
 
@@ -51,10 +51,7 @@ const upvote = async (contract) => {
     },
     body: JSON.stringify(contract),
   };
-  const req = await fetch(
-    'http://localhost:5000/api/review/upvote',
-    requestOptions
-  );
+  await fetch('http://localhost:5000/api/review/upvote', requestOptions);
   return true;
 };
 
@@ -63,7 +60,12 @@ export const reviewThunks = {
     return async function (dispatch) {
       try {
         console.log(data);
-        const post = await postReview(data.review, data.contract);
+        const post = await postNewReview(data.review, data.contract);
+        if (!post.success) {
+          throw new Error(
+            post.message || 'Something went wrong. Please try again.'
+          );
+        }
         dispatch(reviewActions.postReview(post));
       } catch (error) {
         dispatch(uiActions.stopLoading());

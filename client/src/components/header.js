@@ -68,6 +68,13 @@ export default function Example() {
             >
               News
             </a>
+            <a
+              onClick={() => navigate('/membership')}
+              href="#"
+              className="cursor-pointer text-base font-medium text-gray-500 hover:text-gray-900"
+            >
+              membership
+            </a>
           </Popover.Group>
           <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
             <a
@@ -79,7 +86,7 @@ export default function Example() {
             </a>
             {!userState.isLoggedIn && (
               <button
-                // onClick={connectMetamask}
+                onClick={connectMetamask}
                 className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                 onClick={loginHandler}
               >
@@ -158,12 +165,20 @@ export default function Example() {
                     Jobs
                   </a>
                   <a
+                    onClick={() => navigate('/membership')}
+                    href="#"
+                    className="-m-3 p-3   items-center rounded-md hover:bg-gray-50 text-base font-medium text-gray-500 hover:text-gray-900"
+                  >
+                    membership
+                  </a>
+                  <a
                     onClick={() => navigate('/news')}
                     href="#"
                     className="-m-3 p-3   items-center rounded-md hover:bg-gray-50 text-base font-medium text-gray-500 hover:text-gray-900"
                   >
                     News
                   </a>
+                  
 
                   <a
                     onClick={() => navigate(`/users/${userState?.user}`)}
@@ -174,7 +189,7 @@ export default function Example() {
                   </a>
                   {!userState.isLoggedIn && (
                     <button
-                      // onClick={connectMetamask}
+                      onClick={connectMetamask}
                       className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                       onClick={loginHandler}
                     >
@@ -209,4 +224,3 @@ export default function Example() {
     </Popover>
   );
 }
-
