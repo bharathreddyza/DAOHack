@@ -12,6 +12,10 @@ require('./utils/cronJobs');
 DaoModel.create()
   .then(async () => {
     console.log('IPFS connected 📑️📑️');
+    
+    // console.log(await DaoModel.DELETE_ALL_DATA())
+    // console.log(await DaoModel.GET_ALL_DATA())
+
   })
   .catch((err) => {
     console.log('IPFS error : ', err);
