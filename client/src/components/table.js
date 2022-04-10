@@ -1,8 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Dummy from '../Api/dummy.json'
+
 export default function Table(props) {
-   let navigate = useNavigate();
+  const { data } = props;
+  console.log(data)
+  let navigate = useNavigate();
 
   return (
     <div>
@@ -47,7 +49,7 @@ export default function Table(props) {
                 </thead>
 
                 <tbody>
-                  {Dummy.data.items.map((dao) => (
+                  {data.map((dao) => (
                     <tr
                       onClick={() => navigate(`/dao/${dao.contract_address}`)}
                       key={dao.rank}
@@ -68,7 +70,8 @@ export default function Table(props) {
                       </td>
                       {/* treasury bal here */}
                       <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                       </td>
+                        {dao.treasury.toFixed(2)}
+                      </td>
                       {/* coin value */}
                       <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                         {dao.quote_rate.toFixed(4)}

@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserIcon } from '@heroicons/react/solid';
+import { useSelector } from 'react-redux';
 
 export default function Newscard(props) {
   const navigate = useNavigate();
   const { data } = props;
-  console.log(data);
+  // console.log(data);
+  const isMember = useSelector((state) => state.user.isMember);
+
+  const gotoArticleHandler = () => {
+    if (isMember) {
+      navigate(`/news/${data.id}`);
+    } else {
+      if (
+        window.confirm(
+          'This newsletter is only available to members.\n\nBuy Membership?'
+        )
+      ) {
+        navigate('/membership');
+      }
+    }
+  };
+
   return (
     <div
-      onClick={() => navigate(`/news/${data.id}`)}
+      onClick={gotoArticleHandler}
       class="cursor-pointer md:p-4 rounded-md  m-2 bg-white hover:bg-slate-200"
     >
       <img class="rounded-lg w-full" src={data.banner} alt="Banner" />

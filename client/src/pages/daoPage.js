@@ -9,10 +9,13 @@ import { daoThunks } from '../app/daoSlice';
 import Daobasics from '../components/daobasics';
 import Dummy from '../Api/dummy2.json';
 
+import TopStakeHolders from '../components/TopStakeHolders';
 import Chart from '../components/charts';
 import Reviews from '../components/review';
 import JobBoard from '../components/jobBoard';
+import Analytics from '../components/analytics';
 import Proposals from '../components/Proposals';
+import Coalitions from '../components/Coalitions';
 export default function DaoPage() {
   const params = useParams();
   // console.log(contract);
@@ -27,7 +30,7 @@ export default function DaoPage() {
   }, [dispatch, params.contract]);
 
   const uiState = useSelector((state) => state.ui);
-  const activeDao = useSelector((state) => state.dao?.activeDao);
+  const activeDao = useSelector((state) => state.dao.activeDao);
   console.log(activeDao);
   const [counter, setCounter] = useState(1);
 
@@ -63,10 +66,17 @@ export default function DaoPage() {
         >
           <h1>Proposals</h1>
         </div>
+        <div
+          onClick={() => setCounter(5)}
+          className="selector hover:text-purple-600 p-4 px-12 border cursor-pointer"
+        >
+          <h1>Coalitions</h1>
+        </div>
       </div>
-      {counter === 3 && <Chart />}
+      {counter === 3 && <Analytics />}
       {counter === 1 && <Reviews />}
       {counter === 4 && <Proposals />}
+      {counter === 5 && <Coalitions data={activeDao} />}
       {counter === 2 && <JobBoard jobs={activeDao?.jobs} />}
     </div>
   );

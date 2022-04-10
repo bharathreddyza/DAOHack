@@ -107,7 +107,9 @@ export const blogThunks = {
 
         const data = await response.json();
         if (response.status !== 200 || !data.success) {
-          throw new Error('Unable to upvote. please try again.');
+          throw new Error(
+            data.message || 'Unable to upvote. please try again.'
+          );
         }
 
         dispatch(blogActions.upvoteBlog(data.data));

@@ -13,7 +13,7 @@ export default function Votes(props) {
                    <img className='rounded-full p-1' src="https://stamp.fyi/avatar/eth:0xee0e9A9519bd3138e338A748aF99D1fe1bcEAE5F?s=36"/>
                     <h1 className='text-md align-middle'>    <span className='text-sm'>{vote.voter.slice(0, 6)} ... {vote.voter.slice(-4)}</span> </h1>
                    </div>
-                    <h1>{vote.choice}</h1>
+                    <h1>{data.choices[vote.choice]}</h1>
                         
                 </div>
             ))}

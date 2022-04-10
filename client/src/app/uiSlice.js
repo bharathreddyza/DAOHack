@@ -40,10 +40,10 @@ export const uiThunks = {
     return async function (dispatch) {
       let timeout;
       try {
-        console.log('setting error', message);
+        console.log('Setting Error : ', message);
         dispatch(uiActions.setError({ setIsError: true, error: message }));
         timeout = setTimeout(() => {
-          console.log('clearing error');
+          console.log('Clearing Error : ', message);
           dispatch(uiActions.setError({ setIsError: false, error: null }));
         }, 3000);
       } catch (error) {

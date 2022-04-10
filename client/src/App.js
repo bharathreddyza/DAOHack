@@ -15,8 +15,10 @@ import ArticlePage from './pages/ArticlePage';
 import Membership from './pages/Membership';
 import ProposalPage from './pages/ProposalPage';
 function App() {
-   
-  return (
+
+
+    
+    return (
     <div className="App">
       <Header />
       <Routes>
