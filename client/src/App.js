@@ -14,6 +14,7 @@ import NewsPage from './pages/NewsPage';
 import ArticlePage from './pages/ArticlePage';
 import Membership from './pages/Membership';
 import ProposalPage from './pages/ProposalPage';
+import Adverstise from './pages/Adverstise';
 function App() {
 const navigate = useNavigate()
 const isMember = useSelector((state)=>state.user)
@@ -30,7 +31,8 @@ const isMember = useSelector((state)=>state.user)
         <Route path="/news/:id" element={<ArticlePage />} />
         <Route path='/membership' element={<Membership/>}/>
         <Route path='/proposal/:id' element={<ProposalPage/>}/>
-         
+        <Route path='/advertise' element={<Adverstise/>}/>
+
       </Routes>
     </div>
   );

@@ -7,6 +7,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import Tables from '../components/table';
 import Loading from '../components/loading';
 import { daoThunks } from '../app/daoSlice';
+import Banner from '../components/Banners';
+
+// import Banner from '../Assets/banner.png'
 export default function HomePage() {
   const dispatch = useDispatch();
   const overviewState = useSelector((state) => state.dao.overviews);
@@ -20,5 +23,13 @@ export default function HomePage() {
   //loading state when loading
   //display table after data fetched
   // const [loading, setLoading] = useState(false);
-  return <div>{isLoading ? <Loading /> : <Tables data={overviewState} />}</div>;
+  return <div>{isLoading ? <Loading /> :
+  <div>
+     <Tables data={overviewState} />
+
+     <div>
+       <Banner/>
+     </div>
+  </div> 
+ }</div>;
 }

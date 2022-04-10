@@ -75,6 +75,13 @@ export default function Example() {
             >
               membership
             </a>
+            <a
+              onClick={() => navigate('/advertise')}
+              href="#"
+              className="text-base font-medium text-gray-500 hover:text-gray-900"
+            >
+              Adverstise
+            </a>
           </Popover.Group>
           <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
             <a
@@ -177,6 +184,13 @@ export default function Example() {
                     className="-m-3 p-3   items-center rounded-md hover:bg-gray-50 text-base font-medium text-gray-500 hover:text-gray-900"
                   >
                     News
+                  </a>
+                  <a
+                    onClick={() => navigate('/advertise')}
+                    href="#"
+                    className="-m-3 p-3   items-center rounded-md hover:bg-gray-50 text-base font-medium text-gray-500 hover:text-gray-900"
+                  >
+                    Advertise
                   </a>
                   
 
