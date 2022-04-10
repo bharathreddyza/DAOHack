@@ -1,8 +1,8 @@
 // import { useEffect } from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
-
+import { Routes, Route,Redirect, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 //components
 import Header from './components/header';
 //pages
@@ -14,9 +14,10 @@ import NewsPage from './pages/NewsPage';
 import ArticlePage from './pages/ArticlePage';
 import Membership from './pages/Membership';
 import ProposalPage from './pages/ProposalPage';
+import Adverstise from './pages/Adverstise';
 function App() {
-
-
+const navigate = useNavigate()
+const isMember = useSelector((state)=>state.user)
     
     return (
     <div className="App">
@@ -30,6 +31,7 @@ function App() {
         <Route path="/news/:id" element={<ArticlePage />} />
         <Route path='/membership' element={<Membership/>}/>
         <Route path='/proposal/:id' element={<ProposalPage/>}/>
+        <Route path='/advertise' element={<Adverstise/>}/>
 
       </Routes>
     </div>

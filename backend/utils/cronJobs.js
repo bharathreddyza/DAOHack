@@ -115,7 +115,7 @@ cron.schedule('10 * * * *', async () => {
 });
 
 // calcTreasuryOvertime
-cron.schedule('33 2 1 * *', async () => {
+cron.schedule('10 * * * *', async () => {
   console.log('Running cron : calcTreasuryOvertime');
   for (let i = 0; i < daoList.length; i++) {
     try {

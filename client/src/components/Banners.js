@@ -1,9 +1,8 @@
-import React from 'react'
+import React,{useState} from 'react'
+import Banner2 from '../Assets/banner2.jpeg'
 
 const { Framework } = require("@superfluid-finance/sdk-core");
 const { ethers } = require("ethers");
-
-
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -125,6 +124,10 @@ getUserStreams()
 
 
   return (
-    <div>Banners</div>
+    <div>
+      <div className='flex  justify-center'>
+          <img className='' src={Banner2}/>
+      </div>
+    </div>
   )
   }
