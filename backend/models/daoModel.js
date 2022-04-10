@@ -524,10 +524,21 @@ class Dao {
     return true;
   }
 
+  async DELETE_ALL_DELEGATES() {
+    const delegates = await this.delegates.get('');
+    for (let i = 0; i < delegates.length; i++) {
+      const delegate = delegates[i];
+      await this.delegates.del(`${delegate.id}`);
+    }
+    return true;
+  }
+
   async DELETE_ALL_DATA() {
     await this.DELETE_ALL_DAOS();
     await this.DELETE_ALL_REVIEWS();
     await this.DELETE_ALL_JOBS();
+    await this.DELETE_ALL_PROPOSALS_AND_VOTES();
+    await this.DELETE_ALL_DELEGATES();
   }
 
   // async ADD_UPVOTE_USERS_DAOS() {
