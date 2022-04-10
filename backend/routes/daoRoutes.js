@@ -36,4 +36,12 @@ router.get('/:contract/proposalsAndVotes', daoController.getProposalsAndVotes);
 router.get('/votes/all', isAdmin, daoController.getAllVotes);
 router.get('/proposals/all', isAdmin, daoController.getAllProposals);
 
+router.get(
+  '/graph/:contract/delegates',
+  isAdmin,
+  daoController.getDaoDelegatesGraph
+);
+
+router.get('/:contract/delegates', daoController.getDaoDelegates);
+router.get('/delegates/all', isAdmin, daoController.getAllDelegates);
 module.exports = router;

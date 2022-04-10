@@ -55,6 +55,9 @@ class Dao {
 
     this.votes = await this.orbitdb.docs('dao.votes', docStoreOptions);
     await this.votes.load();
+
+    this.delegates = await this.orbitdb.docs('dao.delegates', docStoreOptions);
+    await this.delegates.load();
   }
 
   // --------------------------------------
@@ -418,6 +421,36 @@ class Dao {
   }
   // --------------------------------------
   // ---------Votes methods end -----------
+  // --------------------------------------
+
+  // --------------------------------------
+  // ---------Delegates methods start -----------
+  // --------------------------------------
+  async setDaoDelegates(daoObj) {
+    const existingDao = this.daos.get(daoObj.id)[0];
+    if (!existingDao) {
+      throw new AppError(400, 'No Dao exists with that ID');
+    }
+    await this.delegates.put(daoObj);
+    return daoObj;
+  }
+
+  async getDaoDelegates(daoID) {
+    const existingDao = this.daos.get(daoID)[0];
+    if (!existingDao) {
+      throw new AppError(400, 'No Dao exists with that ID');
+    }
+
+    const delegates = this.delegates.get(daoID)[0];
+    return delegates;
+  }
+
+  async getAllDelegates() {
+    const delegates = this.delegates.get('');
+    return delegates;
+  }
+  // --------------------------------------
+  // ---------Delegates methods end -----------
   // --------------------------------------
 
   // --------------------------------------

@@ -3,8 +3,12 @@ const DaoModel = require('../models/daoModel');
 const daoList = require('./daoList.json');
 const AppError = require('./appError');
 const axios = require('axios');
-const { request, GraphQLClient, gql } = require('graphql-request');
 const util = require('util');
+const {
+  getProsalsReq,
+  getVotesReq,
+  getDaoDelegatesReq,
+} = require('./graphRequests');
 
 const getOverview = async (daoTickers, daoAddresses, pageSize = 100) => {
   try {
@@ -228,86 +232,6 @@ cron.schedule('33 2 1 * *', async () => {
 });
 
 //getAllDaoProposalsAndVotes
-const client = new GraphQLClient('https://hub.snapshot.org/graphql');
-
-const getProsalsReq = async (contractObj) => {
-  const variables = {
-    first: 500,
-    skip: 0,
-    state: 'all',
-    space: `${contractObj.snapshotId}`,
-  };
-
-  const query = gql`
-    query Proposals(
-      $first: Int!
-      $skip: Int!
-      $state: String!
-      $space: String
-      $space_in: [String]
-    ) {
-      proposals(
-        first: $first
-        skip: $skip
-        where: { space: $space, state: $state, space_in: $space_in }
-      ) {
-        id
-        title
-        body
-        start
-        end
-        state
-        author
-        created
-        choices
-        votes
-      }
-    }
-  `;
-
-  const { proposals } = await client.request(query, variables);
-
-  return proposals;
-};
-
-const getVotesReq = async (proposal) => {
-  const variables = {
-    first: 5000,
-    id: `${proposal}`,
-    orderBy: 'vp',
-    orderDirection: 'desc',
-  };
-
-  const query = gql`
-    query Votes(
-      $id: String!
-      $first: Int
-      $skip: Int
-      $orderBy: String
-      $orderDirection: OrderDirection
-      $voter: String
-    ) {
-      votes(
-        first: $first
-        skip: $skip
-        where: { proposal: $id, vp_gt: 0, voter: $voter }
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-      ) {
-        id
-        voter
-        created
-        choice
-        vp
-      }
-    }
-  `;
-
-  const { votes } = await client.request(query, variables);
-
-  return votes;
-};
-
 const daoProposalAndVotesFunc = async (i) => {
   try {
     const { contractAddress: contract, snapshotId, contractName } = daoList[i];
@@ -365,4 +289,20 @@ cron.schedule('*/15 * * * *', async () => {
     }
   }
   console.log('Cron : Get all Dao proposals completed successfully');
+});
+
+// getAllDaoDelegates
+cron.schedule('*/15 * * * *', async () => {
+  console.log('Running cron : getAllDaoDelegates');
+  for (let i = 0; i < daoList.length; i++) {
+    try {
+      const dao = daoList[i];
+      const delegates = await getDaoDelegatesReq(dao.snapshotId);
+      await DaoModel.setDaoDelegates({ id: dao.contractAddress, delegates });
+    } catch (error) {
+      console.log('Cron : Proposal and Votes over time error', error);
+      continue;
+    }
+  }
+  console.log('Cron : Get all Dao delegates completed succesfully');
 });

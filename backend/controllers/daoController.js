@@ -3,6 +3,11 @@ const catchAsync = require('../utils/catchAsync');
 const daoList = require('../utils/daoList.json');
 const axios = require('axios');
 const AppError = require('../utils/appError');
+const {
+  getProsalsReq,
+  getVotesReq,
+  getDaoDelegatesReq,
+} = require('../utils/graphRequests');
 
 function checkFields(body, fields) {
   let field;
@@ -374,12 +379,12 @@ exports.daoDetail = catchAsync(async (req, res, next) => {
   const dao = await DaoModel.getDaoDetails(contract);
   const reviews = await DaoModel.getDaoReviews(contract);
   const jobs = await DaoModel.getDaoJobs(contract);
-  // const proposals = await DaoModel.getDaoProposals()
   const proposals = await DaoModel.getDaoProposalsAndVotes(contract);
+  const { delegates } = await DaoModel.getDaoDelegates(contract);
 
   return res.status(200).json({
     success: true,
-    data: { dao, reviews, jobs, proposals },
+    data: { dao, reviews, jobs, proposals, delegates },
   });
 });
 
@@ -411,86 +416,6 @@ exports.upvoteDao = catchAsync(async (req, res, next) => {
 });
 
 // test controllers
-const { request, GraphQLClient, gql } = require('graphql-request');
-const client = new GraphQLClient('https://hub.snapshot.org/graphql');
-
-const getProsalsReq = async (contractObj) => {
-  const variables = {
-    first: 500,
-    skip: 0,
-    state: 'all',
-    space: `${contractObj.snapshotId}`,
-  };
-
-  const query = gql`
-    query Proposals(
-      $first: Int!
-      $skip: Int!
-      $state: String!
-      $space: String
-      $space_in: [String]
-    ) {
-      proposals(
-        first: $first
-        skip: $skip
-        where: { space: $space, state: $state, space_in: $space_in }
-      ) {
-        id
-        title
-        body
-        start
-        end
-        state
-        author
-        created
-        choices
-        votes
-      }
-    }
-  `;
-
-  const { proposals } = await client.request(query, variables);
-
-  return proposals;
-};
-
-const getVotesReq = async (proposal) => {
-  const variables = {
-    first: 5000,
-    id: `${proposal}`,
-    orderBy: 'vp',
-    orderDirection: 'desc',
-  };
-
-  const query = gql`
-    query Votes(
-      $id: String!
-      $first: Int
-      $skip: Int
-      $orderBy: String
-      $orderDirection: OrderDirection
-      $voter: String
-    ) {
-      votes(
-        first: $first
-        skip: $skip
-        where: { proposal: $id, vp_gt: 0, voter: $voter }
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-      ) {
-        id
-        voter
-        created
-        choice
-        vp
-      }
-    }
-  `;
-
-  const { votes } = await client.request(query, variables);
-
-  return votes;
-};
 
 exports.getProposalsSnap = catchAsync(async (req, res, next) => {
   const { contract } = req.params;
@@ -650,7 +575,7 @@ exports.getProposalsAndVotes = catchAsync(async (req, res, next) => {
 
   // const proposalsWithVotes = await DaoModel.getDaoProposalsAndVotes(contract);
   const proposals = await DaoModel.getDaoProposals(contract);
-  console.log('Typeeeeeeeeee', typeof proposals[0]);
+  // console.log('Typeeeeeeeeee', typeof proposals[0]);
   const votesRes = proposals.map(async (proposal) => {
     const votes = await DaoModel.getProposalVotes(proposal.id);
     proposal.allVotes = votes;
@@ -683,5 +608,43 @@ exports.getAllVotes = catchAsync(async (req, res, next) => {
     success: true,
     length: votes.length,
     data: votes,
+  });
+});
+
+exports.getDaoDelegatesGraph = catchAsync(async (req, res, next) => {
+  const { contract } = req.params;
+  const contractObj = daoList.find((dao) => dao.contractAddress === contract);
+
+  if (!contractObj) {
+    return next(new AppError(400, 'No Dao exists with that ID.'));
+  }
+
+  const delegates = await getDaoDelegatesReq(contractObj.snapshotId);
+  // console.log(delegates);
+  await DaoModel.setDaoDelegates({ id: contract, delegates });
+
+  return res.status(200).json({
+    success: true,
+    data: delegates,
+  });
+});
+
+exports.getDaoDelegates = catchAsync(async (req, res, next) => {
+  const { contract } = req.params;
+  const delegates = await DaoModel.getDaoDelegates(contract);
+
+  return res.status(200).json({
+    success: true,
+    data: delegates,
+  });
+});
+
+exports.getAllDelegates = catchAsync(async (req, res, next) => {
+  const delegates = await DaoModel.getAllDelegates();
+
+  res.status(200).json({
+    success: true,
+    length: delegates.length,
+    data: delegates,
   });
 });
