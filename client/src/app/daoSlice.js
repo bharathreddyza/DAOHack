@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { uiActions, uiThunks } from './uiSlice';
+import daoList from '../Api/daoList.json';
+
 const initialState = {
   overviews: [],
   activeDao: null,
@@ -125,6 +127,16 @@ export const daoThunks = {
             data.message || 'Something went wrong. Please try again.'
           );
         }
+        const reqContract = daoList.find(
+          (dao) => dao.contractAddress === contract
+        );
+
+        data.data.dao.description = reqContract.description;
+        if (!reqContract.logoUrl.includes('covalenthq')) {
+          data.data.dao.logo_url = reqContract.logoUrl;
+        }
+
+        console.log(data.data);
         dispatch(daoActions.setActiveDao(data.data));
         dispatch(uiActions.stopLoading());
       } catch (error) {
