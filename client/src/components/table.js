@@ -6,6 +6,28 @@ export default function Table(props) {
   console.log(data)
   let navigate = useNavigate();
 
+
+  function convertToInternationalCurrencySystem (labelValue) {
+
+    // Nine Zeroes for Billions
+    const value =  Math.abs(Number(labelValue)) >= 1.0e+9
+
+    ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
+    // Six Zeroes for Millions 
+    : Math.abs(Number(labelValue)) >= 1.0e+6
+
+    ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
+    // Three Zeroes for Thousands
+    : Math.abs(Number(labelValue)) >= 1.0e+3
+
+    ? (Math.abs(Number(labelValue)) / 1.0e+3).toFixed(2) + "K"
+
+    : Math.abs(Number(labelValue));
+
+    return <h1>{value}</h1>
+
+}
+
   return (
     <div>
       <div className="relative py-16 ">
@@ -71,7 +93,7 @@ export default function Table(props) {
                       </td>
                       {/* treasury bal here */}
                       <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                        {dao.treasury.toFixed(2)}
+                        { convertToInternationalCurrencySystem(dao.treasury)}
                       </td>
                       {/* coin value */}
                       <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -96,12 +118,12 @@ export default function Table(props) {
                       <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                         <div className="flex justify-center">
                           <img
-                            src="https://demos.creative-tim.com/notus-js/assets/img/team-1-800x800.jpg"
+                            src="https://ipfs.io/ipfs/Qmc5rDcaNofq7Jw69EWVKWtoWMmhgJiQ611631vXAtuby2"
                             alt="..."
                             className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
                           />
                           <img
-                            src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
+                            src="https://ipfs.io/ipfs/QmTLKm4dx7KBPtyEnqppbABi4kg2afTeoKKLQPa8cjc8gj"
                             alt="..."
                             className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
                           />

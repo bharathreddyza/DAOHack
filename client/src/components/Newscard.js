@@ -52,7 +52,7 @@ export default function Newscard(props) {
         /> */}
         <UserIcon className="w-10 h-10 object-cover object-center rounded-full self-start"></UserIcon>
         <div className="">
-          <p className="text-gray-900 font-semibold">{data.user}</p>
+          <p className="text-gray-900 font-semibold">{data.user.slice(0,4)} ... {data.user.slice(-4)}</p>
           <p className="text-gray-500 font-semibold text-sm">
             {new Date(data.publishedAt).toDateString()}
           </p>

@@ -27,7 +27,7 @@ export default function Membership() {
     <div>
         <div>
             <div>
-              {dummy && <div>
+              {state.isMember && <div>
                 <h1 className="text-2xl font font-medium m-2">Deactivate Membership</h1>
                <div>
                  <h1 className="text-cxl font-medium">welcome</h1>
@@ -37,7 +37,7 @@ export default function Membership() {
 
               </div> }
 
-              {!dummy && <div>
+              {!state.isMember && <div>
                 <h1 className="text-2xl font font-medium m-2">Activate Membership</h1>
                <div>
                  <h1 className="text-cxl font-medium">welcome</h1>
@@ -48,7 +48,7 @@ export default function Membership() {
 
                 </div>}
 
-                {dummy &&
+                {state.isMember &&
                 <div className="flex items-center mt-20 ml-10 ">
                     <h1 className="text-3xl mr-20">Membership Nft:</h1>
                        <img  className="w-40 p-4 border rounded-md"  src={Daomember}/>
