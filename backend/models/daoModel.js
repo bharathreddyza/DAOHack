@@ -461,7 +461,9 @@ class Dao {
     const daos = this.daos.get('');
     const reviews = this.reviews.get('');
     const jobs = this.jobs.get('');
-    return { daos, reviews, jobs };
+    const proposals = this.proposals.get('');
+    const votes = this.votes.get('');
+    return { daos, reviews, jobs, proposals, votes };
   }
 
   async GET_ALL_JOBS() {
