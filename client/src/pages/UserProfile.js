@@ -58,7 +58,7 @@ export default function UserProfile() {
   }
   return (
     <div className='my-10 bg-gray-100'>
-      <div className='p-3 md:ml-28 flex justify-left'>
+      {/* <div className='p-3 md:ml-28 flex justify-left'>
         <img className='w-24 h-24 rounded-full ' src='https://ph-avatars.imgix.net/3600866/original?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=30&h=30&fit=crop&dpr=2'/>
        <div className='flex-1'>
        <div className='flex mx-8'>
@@ -109,7 +109,7 @@ export default function UserProfile() {
           ))
                }
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
