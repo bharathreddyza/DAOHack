@@ -50,7 +50,8 @@ export default  function Adverstise() {
   }
   
 
-     const testAuthentication = () => {
+     const testAuthentication = (e) => {
+       e.preventDefault()
         const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
         return axios
             .post(url,state, {
@@ -160,7 +161,7 @@ async function createNewFlow(recipient, flowRate) {
         <div>
             <h1 className='text-2xl font-medium '> Advertise with us</h1>
         </div>
-         <form onSubmit={()=>testAuthentication()}>
+         <form onSubmit={(e)=>testAuthentication(e)}>
 
         <div className='flex justify-center rounded-md mt-20 '>
             <h1 className='p-1 text-lg'>upload image</h1>
