@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Table(props) {
   const { data } = props;
-  console.log(data)
+  console.log(data);
   let navigate = useNavigate();
-
+  // console.log(data[0].lastUpdatedAt);
   return (
     <div>
       <div className="relative py-16 ">
@@ -18,7 +18,7 @@ export default function Table(props) {
               <div className="flex flex-wrap items-center">
                 <div className="relative w-full px-4 max-w-full flex-grow flex-1 ">
                   <h3 className="font-semibold text-lg text-white">Daos </h3>
-                  <h1>last updated at {data[0].updatedAt.slice(0,20)}</h1>
+                  <h1>Last Updated at {data[0]?.lastUpdatedAt.slice(0, 20)}</h1>
                 </div>
               </div>
             </div>

@@ -16,8 +16,9 @@ export default function NewsPage() {
 
   return (
     <React.Fragment>
-      {isLoading && <Loading></Loading>}
-      {!isLoading && (
+      {isLoading ? (
+        <Loading></Loading>
+      ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {blogState.blogs.map((blog) => (
             <Newscard data={blog} />
